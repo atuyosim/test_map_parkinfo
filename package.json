@@ -1,0 +1,1 @@
+{"scripts":{"serve":"vue-cli-service serve","build":"vue-cli-service build","lint":"vue-cli-service lint"},"devDependencies":{"@vue/cli-service":"^5.0.8"},"dependencies":{"@fawmi/vue-google-maps":"^0.9.79","dotenv":"^16.4.7","express":"^4.21.2","mssql":"^11.0.1","vue":"^3.5.13"}}
