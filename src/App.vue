@@ -3,7 +3,11 @@
     <HeaderComponent />
     <div class="main-content">
       <!-- SidebarComponent -->
-      <SidebarComponent :isVisible="isSidebarVisible" :parkingInfo="selectedParking" />
+      <SidebarComponent 
+        :isVisible="isSidebarVisible" 
+        :parkingInfo="selectedParking" 
+        @close-sidebar="isSidebarVisible = false"
+      />
       <!-- MapComponent -->
       <MapComponent :onMarkerClick="handleMarkerClick" />
     </div>
@@ -25,7 +29,8 @@ export default {
   data() {
     return {
       isSidebarVisible: false, // サイドバーの表示状態
-      selectedParking: {}, // 選択された駐車場の情報
+      selectedParking: null,
+      //selectedParking: {}, // 選択された駐車場の情報
     };
   },
   methods: {

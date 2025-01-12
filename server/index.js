@@ -41,6 +41,45 @@ app.get("/api/getParkingData", async (req, res) => {
   }
 });
 
+
+// 料金データを取得するエンドポイント
+app.get("/api/getRyokin", async (req, res) => {
+  const { parkcd } = req.query;
+
+  if (!parkcd) {
+    return res.status(400).send("parkcd is required");
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request()
+      .input("parkcd", sql.NVarChar, parkcd)
+      .query(`
+        SELECT 
+          parkcd,
+          getinfodate,
+          getinfotime,
+          SEQ,
+          maxprice_desc,
+          maxprice_detail,
+          normalprice_desc,
+          normalprice_detail
+        FROM 
+          VParkinfo_ryokin
+        WHERE 
+          parkcd = @parkcd
+        ORDER BY 
+          getinfodate DESC,
+          SEQ ASC;
+      `);
+
+    res.json(result.recordset);
+  } catch (error) {
+    console.error("Database query failed:", error);
+    res.status(500).send("Failed to fetch data");
+  }
+});
+
 // サーバー起動
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
