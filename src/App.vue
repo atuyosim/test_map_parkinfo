@@ -2,7 +2,9 @@
   <div id="app">
     <HeaderComponent />
     <div class="main-content">
+      <!-- SidebarComponent -->
       <SidebarComponent :isVisible="isSidebarVisible" :parkingInfo="selectedParking" />
+      <!-- MapComponent -->
       <MapComponent :onMarkerClick="handleMarkerClick" />
     </div>
   </div>
@@ -22,15 +24,20 @@ export default {
   },
   data() {
     return {
-      isSidebarVisible: false, // サイドバーの表示/非表示
+      isSidebarVisible: false, // サイドバーの表示状態
       selectedParking: {}, // 選択された駐車場の情報
     };
   },
   methods: {
     handleMarkerClick(parking) {
-      // マーカーがクリックされたときにサイドバーを表示
+      // マーカークリック時にサイドバーを表示し、情報を設定
+
+      console.log("handleMarkerClick called with:", parking);
+
       this.selectedParking = parking;
       this.isSidebarVisible = true;
+
+      console.log("isSidebarVisible:", this.isSidebarVisible); 
     },
   },
 };
