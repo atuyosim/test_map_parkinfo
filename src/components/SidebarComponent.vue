@@ -1,20 +1,37 @@
 <template>
-  <div v-if="isVisible" class="sidebar">
+  <div v-if="parkingInfo && parkingInfo.ryokinData && parkingInfo.ryokinData.length > 0" class="sidebar">
+    <h2>{{ parkingInfo.parkname }}</h2>
+    <a :href="parkingInfo.url" target="_blank">駐車場の詳細を見る</a>
+
+    <!-- 駐車場の料金情報をテーブル形式で表示 -->
+    <table class="parking-info-table">
+      <thead>
+        <tr>
+          <th>対象名</th>
+          <th>最大料金 (繰り返し適用)</th>
+          <th>詳細</th>
+          <th>通常料金</th>
+          <th>詳細</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(ryokin, index) in parkingInfo.ryokinData" :key="index">
+          <td>{{ ryokin[`taisyoname${index + 1}`] || '全日' }}</td>
+          <td>{{ ryokin[`maxprice_desc${index + 1}`] || '情報なし' }}</td>
+          <td>{{ ryokin[`maxprice_detail${index + 1}`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_desc${index + 1}`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_detail${index + 1}`] || '情報なし' }}</td>
+        </tr>
+      </tbody>
+    </table>
     <button @click="closeSidebar">閉じる</button>
-    <h2>{{ parkingInfo.name || "No Name" }}</h2>
-    <p>緯度: {{ parkingInfo.lat }}</p>
-    <p>経度: {{ parkingInfo.lng }}</p>
-    <p>URL: <a :href="parkingInfo.url" target="_blank">{{ parkingInfo.url }}</a></p>
-    <h3>料金情報</h3>
-    <ul>
-      <li v-for="(price, index) in ryokinData" :key="index">
-        <p>取得日: {{ price.getinfodate }}</p>
-        <p>最大料金: {{ price.maxprice_desc }} - {{ price.maxprice_detail }}</p>
-        <p>通常料金: {{ price.normalprice_desc }} - {{ price.normalprice_detail }}</p>
-      </li>
-    </ul>
+  </div>
+  <div v-else class="sidebar">
+    <p>料金情報がありません。</p>
+    <button @click="closeSidebar">閉じる</button>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -54,24 +71,47 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .sidebar {
   position: absolute;
   top: 0;
   left: 0;
-  width: 300px;
+  width: 50%; /* サイドバーを画面幅の半分に設定 */
   height: 100vh;
-  background-color: #f4f4f4;
+  background-color: rgb(215, 148, 34);
   border-right: 1px solid #ccc;
   overflow-y: auto;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-
   z-index: 1000;
-
+  padding: 20px;
 }
 
-.sidebar.hidden {
-  display: none; /* サイドバーを非表示にする場合 */
+.parking-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
+.parking-info-table th,
+.parking-info-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.parking-info-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.parking-info-table tbody tr:nth-child(odd) {
+  background-color: #fafafa;
+}
+
+.parking-info-table tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
 </style>
+
+
+

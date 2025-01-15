@@ -26,7 +26,8 @@ export default {
 
         // データを整形
         this.parkingData = data.map((parking) => ({
-          name: parking.駐車場名,
+          parkname: parking.駐車場名,
+          parkcd:parking.parkcd,
           lat: parseFloat(parking.緯度),
           lng: parseFloat(parking.経度),
           url: parking.URL,
