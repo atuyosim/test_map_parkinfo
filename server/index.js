@@ -33,7 +33,29 @@ app.use(cors(corsOptions));
 app.get("/api/getParkingData", async (req, res) => {
   try {
     let pool = await sql.connect(dbConfig);
-    let result = await pool.request().query("SELECT * FROM VParkInfo");
+    let result = await pool.request().query(`
+      SELECT 
+      [company]
+      ,[companyname]
+      ,[parkcd]
+      ,[取得日]
+      ,[取得日時]
+      ,[県名]
+      ,[市町村名]
+      ,[駐車場名]
+      ,[URL]
+      ,[緯度]
+      ,[経度]
+      ,[住所]
+      ,[台数等]
+      ,[車両制限]
+      ,[入出庫可能時間]
+      ,[駐車場写真のURL]
+      ,[料金ファイル]
+      ,[登録日時]
+      ,[ryokin]
+      ,[ryokin_changed]
+       FROM VParkInfo`);
     res.json(result.recordset);
   } catch (err) {
     console.error("Database query failed:", err.message);
@@ -88,7 +110,7 @@ app.get("/api/getRyokin", async (req, res) => {
       ,[normalprice_desc5]
       ,[normalprice_detail5]
         FROM 
-          VParkinfo_ryokin
+          VParkinfo_ryokin_ALL
         WHERE 
           parkcd = @parkcd
         ORDER BY 

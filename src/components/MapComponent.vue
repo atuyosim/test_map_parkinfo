@@ -27,7 +27,8 @@ export default {
         // データを整形
         this.parkingData = data.map((parking) => ({
           parkname: parking.駐車場名,
-          parkcd:parking.parkcd,
+          parkcd: parking.parkcd,
+          getdate: parking.取得日,
           lat: parseFloat(parking.緯度),
           lng: parseFloat(parking.経度),
           url: parking.URL,
@@ -72,7 +73,7 @@ export default {
         const marker = new google.maps.Marker({
           position: { lat: parking.lat, lng: parking.lng },
           map: this.map,
-          title: parking.name,
+          title: parking.parkname,
           icon: icons[parking.company] || null, // アイコンを設定
         });
 

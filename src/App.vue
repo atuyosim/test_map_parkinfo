@@ -4,9 +4,9 @@
     <div class="main-content">
       <!-- SidebarComponent -->
       <SidebarComponent 
-        :isVisible="isSidebarVisible" 
+        v-if="isSidebarVisible"
         :parkingInfo="selectedParking" 
-        @close-sidebar="isSidebarVisible = false"
+        @close-sidebar="hideSidebar"
       />
       <!-- MapComponent -->
       <MapComponent :onMarkerClick="handleMarkerClick" />
@@ -57,8 +57,13 @@ export default {
       } catch (error) {
         console.error("料金情報の取得に失敗しました:", error);
       }
+    },
+    async hideSidebar() {
+      console.log('close-sidebar event received'); // イベントが受信されたことを確認
+      this.isSidebarVisible = false;
     }
   }
+
 };
 </script>
 

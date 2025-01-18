@@ -1,17 +1,23 @@
 <template>
-  <div v-if="parkingInfo && parkingInfo.ryokinData && parkingInfo.ryokinData.length > 0" class="sidebar">
-    <h2>{{ parkingInfo.parkname }}</h2>
-    <a :href="parkingInfo.url" target="_blank">駐車場の詳細を見る</a>
+  <div v-if=" parkingInfo && parkingInfo.ryokinData && parkingInfo.ryokinData.length > 0" class="sidebar">
+
+    <h2>
+      {{ parkingInfo.parkname }}
+      <button class="close-button" @click="closeSidebar">閉じる</button>
+    </h2>
+    <a :href="parkingInfo.url" target="_blank">HPを開く</a>
 
     <!-- 駐車場の料金情報をテーブル形式で表示 -->
     <table class="parking-info-table">
       <thead>
         <tr>
-          <th>対象名</th>
-          <th>最大料金 (繰り返し適用)</th>
-          <th>詳細</th>
-          <th>通常料金</th>
-          <th>詳細</th>
+          <th>取得</th>
+          <th colspan="4">{{ parkingInfo.ryokinData[0].getinfodate }}</th>
+        </tr>
+        <tr>
+          <th>適用</th>
+          <th colspan="2">最大</th>
+          <th colspan="2">通常</th>
         </tr>
       </thead>
       <tbody>
@@ -24,12 +30,14 @@
         </tr>
       </tbody>
     </table>
-    <button @click="closeSidebar">閉じる</button>
   </div>
+
+  <!--
   <div v-else class="sidebar">
     <p>料金情報がありません。</p>
     <button @click="closeSidebar">閉じる</button>
   </div>
+  -->
 </template>
 
 
@@ -37,7 +45,7 @@
 export default {
   name: "SidebarComponent",
   props: {
-    isVisible: {
+    isVisible: { 
       type: Boolean,
       required: true,
     },
@@ -65,6 +73,7 @@ export default {
       }
     },
     closeSidebar() {
+      console.log('close-sidebar event emitted'); // イベントが発火されたことを確認
       this.$emit("close-sidebar");
     },
   },
@@ -75,10 +84,10 @@ export default {
 .sidebar {
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   width: 50%; /* サイドバーを画面幅の半分に設定 */
   height: 100vh;
-  background-color: rgb(215, 148, 34);
+  background-color: rgb(241, 244, 175);
   border-right: 1px solid #ccc;
   overflow-y: auto;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
