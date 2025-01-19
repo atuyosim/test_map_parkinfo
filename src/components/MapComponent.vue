@@ -47,7 +47,10 @@ export default {
           return;
         }
         const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.VUE_APP_GOOGLE_MAPS_API_KEY}`;
+
+      //  script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.VUE_APP_GOOGLE_MAPS_API_KEY}`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.VUE_APP_GOOGLE_MAPS_API_KEY}&libraries=geometry`;
+
         script.async = true;
         script.defer = true;
         script.onload = resolve;
@@ -82,38 +85,92 @@ export default {
       this.map = new google.maps.Map(this.$refs.mapContainer, mapOptions);
     },
     updateMap() {
-      // 既存のマーカーを削除
-      this.markers.forEach((marker) => marker.setMap(null));
-      this.markers = [];
+            // 既存のマーカーを削除
+            this.markers.forEach((marker) => marker.setMap(null));
+            this.markers = [];
 
-      // アイコンの設定
-      const icons = {
-        0: "/res/pin_meitetsukyosho.png", // 名鉄協商アイコンのパス
-        1: "/res/pin_times.png",   // タイムズアイコンのパス
-      };
+            // アイコンの設定
+            const icons = {
+              0: "/res/pin_meitetsukyosho.png", // 名鉄協商アイコン
+              1: "/res/pin_times.png",          // タイムズアイコン
+            };
 
-      // フィルタリングされた駐車場データを処理
-      this.parkingData.forEach((data) => {
-        if (this.filters && this.filters.ryokin && data.ryokin !== 1) return;
-        //if (this.filters.company !== null && data.company !== this.filters.company) return;
+            if(this.filters){
+              console.log('this.filters = ' + this.filters);
+              if(this.filters.ryokin){
+                console.log('this.filters.ryokin = ' + this.filters.ryokin);
+                
+              }
+            }
 
-        //console.log("filters.ryokin = " + this.filters.ryokin);
-        //console.log("data.ryokin = " + data.ryokin);
+            if (this.filters && this.filters.ryokin  ) {
 
-        const marker = new google.maps.Marker({
-          position: { lat: data.lat, lng: data.lng },
-          map: this.map,
-          title: data.parkname,
-          icon: icons[data.company] || null,
-        });
+              // 「変更あり」: `ryokin=1` を基準に協商アイコンを描画
+              const ryokinFilteredData = this.parkingData.filter((data) => data.ryokin === 1);
+              const meitetsuData = this.parkingData.filter((data) => data.company === 0);
 
-        marker.addListener("click", () => {
-          this.onMarkerClick(data);
-        });
+              ryokinFilteredData.forEach((baseData) => {
+                // 基準データのマーカーを表示
+                const marker = new google.maps.Marker({
+                  position: { lat: baseData.lat, lng: baseData.lng },
+                  map: this.map,
+                  title: baseData.parkname,
+                  icon: icons[1], // タイムズのアイコン
+                });
 
-        this.markers.push(marker);
+                marker.addListener("click", () => {
+                  this.onMarkerClick(baseData);
+                });
 
-      });
+                this.markers.push(marker);
+
+                // 半径 100m 内にある協商アイコンを探索
+                meitetsuData.forEach((meitetsu) => {
+                  const basePosition = new google.maps.LatLng(baseData.lat, baseData.lng);
+                  const meitetsuPosition = new google.maps.LatLng(meitetsu.lat, meitetsu.lng);
+
+                  const distance = google.maps.geometry.spherical.computeDistanceBetween(basePosition, meitetsuPosition);
+
+                  if (distance <= 100) {
+                    // 協商データのマーカーを表示
+                    const meitetsuMarker = new google.maps.Marker({
+                      position: { lat: meitetsu.lat, lng: meitetsu.lng },
+                      map: this.map,
+                      title: meitetsu.parkcd + ":" +  meitetsu.parkname,
+                      icon: icons[0], // 名鉄協商のアイコン
+                    });
+
+                    meitetsuMarker.addListener("click", () => {
+                      this.onMarkerClick(meitetsu);
+                    });
+
+                    this.markers.push(meitetsuMarker);
+                  }
+                });
+              });
+
+
+            } else {
+
+              // 「変更なし」: すべてのデータを描画
+              this.parkingData.forEach((data) => {
+                const marker = new google.maps.Marker({
+                  position: { lat: data.lat, lng: data.lng },
+                  map: this.map,
+                  title: data.parkname,
+                  icon: icons[data.company] || null, // アイコンを設定
+                });
+
+                marker.addListener("click", () => {
+                  this.onMarkerClick(data);
+                });
+
+                this.markers.push(marker);
+
+                });
+              
+            }//if 
+
     },
   },
 };
