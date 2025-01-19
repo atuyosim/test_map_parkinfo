@@ -8,28 +8,69 @@
     <a :href="parkingInfo.url" target="_blank">HPを開く</a>
 
     <!-- 駐車場の料金情報をテーブル形式で表示 -->
-    <table class="parking-info-table">
-      <thead>
-        <tr>
-          <th>取得</th>
-          <th colspan="4">{{ parkingInfo.ryokinData[0].getinfodate }}</th>
+     <div v-for="(ryokin, index) in parkingInfo.ryokinData" :key="index" class="ryokin-section">
+      <h3>取得日: {{ ryokin.getinfodate }}</h3>
+      <table class="parking-info-table">
+        <thead>
+          <tr>
+            <th>適用  </th>
+            <th colspan=2>最大料金説明</th>
+            <th colspan=2>通常料金説明</th>
+          </tr>
+        </thead>
+        <tbody>
+
+<!--
+ v-for v-ifだとなぜかうまくいかないので
+        <tr v-for="i in 5" :key="i"  v-if="ryokin && i > '0' ">
+          <td>{{ ryokin[`taisyoname${i}`]  || '情報なし' }} </td>
+          <td>{{ ryokin[`maxprice_desc${i}`] || '情報なし' }}</td>
+          <td>{{ ryokin[`maxprice_detail${i}`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_desc${i}`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_detail${i}`] || '情報なし' }}</td>
         </tr>
-        <tr>
-          <th>適用</th>
-          <th colspan="2">最大</th>
-          <th colspan="2">通常</th>
+-->
+        <tr v-if="ryokin[`taisyoname1`] ">
+          <td>{{ ryokin[`taisyoname1`]  || '情報なし' }} </td>
+          <td>{{ ryokin[`maxprice_desc1`] || '情報なし' }}</td>
+          <td>{{ ryokin[`maxprice_detail1`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_desc1`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_detail1`] || '情報なし' }}</td>
         </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(ryokin, index) in parkingInfo.ryokinData" :key="index">
-          <td>{{ ryokin[`taisyoname${index + 1}`] || '全日' }}</td>
-          <td>{{ ryokin[`maxprice_desc${index + 1}`] || '情報なし' }}</td>
-          <td>{{ ryokin[`maxprice_detail${index + 1}`] || '情報なし' }}</td>
-          <td>{{ ryokin[`normalprice_desc${index + 1}`] || '情報なし' }}</td>
-          <td>{{ ryokin[`normalprice_detail${index + 1}`] || '情報なし' }}</td>
+        <tr v-if="ryokin[`taisyoname2`] ">
+          <td>{{ ryokin[`taisyoname2`]  || '情報なし' }} </td>
+          <td>{{ ryokin[`maxprice_desc2`] || '情報なし' }}</td>
+          <td>{{ ryokin[`maxprice_detail2`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_desc2`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_detail2`] || '情報なし' }}</td>
         </tr>
-      </tbody>
-    </table>
+        <tr v-if="ryokin[`taisyoname3`] ">
+          <td>{{ ryokin[`taisyoname3`]  || '情報なし' }} </td>
+          <td>{{ ryokin[`maxprice_desc3`] || '情報なし' }}</td>
+          <td>{{ ryokin[`maxprice_detail3`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_desc3`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_detail3`] || '情報なし' }}</td>
+        </tr>
+        <tr v-if="ryokin[`taisyoname4`] ">
+          <td>{{ ryokin[`taisyoname4`]  || '情報なし' }} </td>
+          <td>{{ ryokin[`maxprice_desc4`] || '情報なし' }}</td>
+          <td>{{ ryokin[`maxprice_detail4`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_desc4`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_detail4`] || '情報なし' }}</td>
+        </tr>
+        <tr v-if="ryokin[`taisyoname5`] ">
+          <td>{{ ryokin[`taisyoname5`]  || '情報なし' }} </td>
+          <td>{{ ryokin[`maxprice_desc5`] || '情報なし' }}</td>
+          <td>{{ ryokin[`maxprice_detail5`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_desc5`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_detail5`] || '情報なし' }}</td>
+        </tr>
+
+
+        </tbody>
+      </table>
+    </div>
+
   </div>
 
   <!--

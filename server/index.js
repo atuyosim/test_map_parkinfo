@@ -110,7 +110,7 @@ app.get("/api/getRyokin", async (req, res) => {
       ,[normalprice_desc5]
       ,[normalprice_detail5]
         FROM 
-          VParkinfo_ryokin_ALL
+          VParkinfo_ryokin_DISP
         WHERE 
           parkcd = @parkcd
         ORDER BY 

@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <HeaderComponent />
+    <HeaderComponent
+    @filterChanged = "handleFilterChange" />
     <div class="main-content">
       <!-- SidebarComponent -->
       <SidebarComponent 
@@ -9,7 +10,9 @@
         @close-sidebar="hideSidebar"
       />
       <!-- MapComponent -->
-      <MapComponent :onMarkerClick="handleMarkerClick" />
+      <MapComponent 
+        :filters="filters" 
+        :onMarkerClick="handleMarkerClick" />
     </div>
   </div>
 </template>
@@ -61,7 +64,13 @@ export default {
     async hideSidebar() {
       console.log('close-sidebar event received'); // イベントが受信されたことを確認
       this.isSidebarVisible = false;
-    }
+    },
+    async handleFilterChange(newFilters) {
+      console.log('called handleFiterChange');
+      this.filters = newFilters; // フィルタを更新
+    },
+
+
   }
 
 };

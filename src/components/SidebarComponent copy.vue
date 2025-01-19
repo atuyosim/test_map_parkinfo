@@ -1,37 +1,43 @@
 <template>
-  <div v-if="parkingInfo && parkingInfo.ryokinData && parkingInfo.ryokinData.length > 0">
+  <div v-if=" parkingInfo && parkingInfo.ryokinData && parkingInfo.ryokinData.length > 0" class="sidebar">
 
-    <h2>{{ parkingInfo.name }}</h2> 
-    <a :href="parkingInfo.url" target="_blank">駐車場の詳細を見る</a>
-    <ul class="p-price_items">
-      <li class="p-price_items_list_first">
-        <p class="p-price_items_list_first_ttl js-align1" style="height: 54px;">　</p>
-        <div class="p-price_items_list_first_wrap">
-          <p class="p-price_items_list_first_subTtl js-align2" style="height: 141px;">最大料金<br>(繰り返し適用)</p>
-          <p class="p-price_items_list_first_subTtl js-align3" style="height: 104px;">通常料金<br></p>
-        </div>
-      </li>
-      <!-- 料金情報を動的に表示 -->
-      <li v-for="(ryokin, index) in parkingInfo.ryokinData" :key="index" class="p-price_items_list js-price_items_list">
-        <h4 class="p-price_items_list_ttl p-price_items_list_ttl--type2 js-align1" style="height: 54px;">
-          {{ ryokin.taisyoname1 || '全日' }}
-        </h4>
-        <div class="p-price_items_list_wrap">
-          <h5 class="p-price_items_list_subTtl">最大料金<br>(繰り返し適用)</h5>
-          <p class="p-price_items_list_txt js-align2" style="height: 141px;">
-            {{ ryokin.maxprice_desc1 || '情報がありません' }}
-          </p>
-          <h5 class="p-price_items_list_subTtl">通常料金<br></h5>
-          <p class="p-price_items_list_txt js-align3" style="height: 104px;">
-            {{ ryokin.normalprice_desc1 || '情報がありません' }}
-          </p>
-        </div>
-      </li>
-    </ul>
+    <h2>
+      {{ parkingInfo.parkname }}
+      <button class="close-button" @click="closeSidebar">閉じる</button>
+    </h2>
+    <a :href="parkingInfo.url" target="_blank">HPを開く</a>
+
+    <!-- 駐車場の料金情報をテーブル形式で表示 -->
+    <table class="parking-info-table">
+      <thead>
+        <tr>
+          <th>取得</th>
+          <th colspan="4">{{ parkingInfo.ryokinData[0].getinfodate }}</th>
+        </tr>
+        <tr>
+          <th>適用</th>
+          <th colspan="2">最大</th>
+          <th colspan="2">通常</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(ryokin, index) in parkingInfo.ryokinData" :key="index">
+          <td>{{ ryokin[`taisyoname${index + 1}`] || '全日' }}</td>
+          <td>{{ ryokin[`maxprice_desc${index + 1}`] || '情報なし' }}</td>
+          <td>{{ ryokin[`maxprice_detail${index + 1}`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_desc${index + 1}`] || '情報なし' }}</td>
+          <td>{{ ryokin[`normalprice_detail${index + 1}`] || '情報なし' }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <div v-else>
+
+  <!--
+  <div v-else class="sidebar">
     <p>料金情報がありません。</p>
+    <button @click="closeSidebar">閉じる</button>
   </div>
+  -->
 </template>
 
 
@@ -39,7 +45,7 @@
 export default {
   name: "SidebarComponent",
   props: {
-    isVisible: {
+    isVisible: { 
       type: Boolean,
       required: true,
     },
@@ -67,32 +73,54 @@ export default {
       }
     },
     closeSidebar() {
+      console.log('close-sidebar event emitted'); // イベントが発火されたことを確認
       this.$emit("close-sidebar");
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 .sidebar {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 300px;
+  right: 0;
+  width: 50%; /* サイドバーを画面幅の半分に設定 */
   height: 100vh;
-  background-color:rgb(215, 148, 34);
+  background-color: rgb(241, 244, 175);
   border-right: 1px solid #ccc;
   overflow-y: auto;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-
   z-index: 1000;
-
+  padding: 20px;
 }
 
-.sidebar.hidden {
-  display: none; /* サイドバーを非表示にする場合 */
+.parking-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
+.parking-info-table th,
+.parking-info-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.parking-info-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.parking-info-table tbody tr:nth-child(odd) {
+  background-color: #fafafa;
+}
+
+.parking-info-table tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
 </style>
+
 
 
