@@ -1,7 +1,11 @@
 <template>
   <div id="app">
     <HeaderComponent
-    @filterChanged = "handleFilterChange" />
+      @filterChanged = "handleFilterChange" 
+      @exportCsv = "exportCsv"
+      @searchParking="handleSearchParking"
+
+    />
     <div class="main-content">
       <!-- SidebarComponent -->
       <SidebarComponent 
@@ -11,6 +15,7 @@
       />
       <!-- MapComponent -->
       <MapComponent 
+        ref="mapComponent" 
         :filters="filters" 
         :onMarkerClick="handleMarkerClick" />
     </div>
@@ -33,6 +38,9 @@ export default {
     return {
       isSidebarVisible: false, // サイドバーの表示状態
       selectedParking: null,   // 選択された駐車場の情報
+
+      filters: { ryokin: false }, // 必須プロパティを初期化
+
     };
   },
 
@@ -70,10 +78,26 @@ export default {
       this.filters = newFilters; // フィルタを更新
     },
 
+    exportCsv() {
 
-  }
+      //this.$refs.mapComponent.exportCsv(); // MapComponent にCSV出力を指示
+      if (this.$refs.mapComponent) {
+        this.$refs.mapComponent.exportCsv(); // MapComponent のメソッドを呼び出し
+      } else {
+        console.error("MapComponent is not properly referenced.");
+      }
 
-};
+    },//exportCsv
+
+    handleSearchParking(searchTerm) {
+      this.$refs.mapComponent.searchAndCenter(searchTerm); // MapComponent に検索とセンター移動を指示
+    },//handleSearchParking
+
+
+  } //methods
+
+}; //export Default
+
 </script>
 
 <style>

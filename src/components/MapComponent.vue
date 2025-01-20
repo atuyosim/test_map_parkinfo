@@ -171,9 +171,87 @@ export default {
               
             }//if 
 
-    },
-  },
-};
+    },//updateMap
+    async exportCsv() {
+    const filteredData = this.parkingData.filter((data) => data.ryokin === 1);
+    const meitetsuData = this.parkingData.filter((data) => data.company === 0);
+    const csvRows = [["parkcd,parkname,url,times_parkname,times_url"]]; // ヘッダー行
+
+    // 100m以内の協商データを探索
+    filteredData.forEach((baseData) => {
+      const basePosition = new google.maps.LatLng(baseData.lat, baseData.lng);
+
+      meitetsuData.forEach((meitetsu) => {
+        const meitetsuPosition = new google.maps.LatLng(meitetsu.lat, meitetsu.lng);
+        const distance = google.maps.geometry.spherical.computeDistanceBetween(basePosition, meitetsuPosition);
+
+        if (distance <= 100) {
+          csvRows.push([
+            meitetsu.parkcd,
+            meitetsu.parkname,
+            meitetsu.url,
+            baseData.parkname,
+            baseData.url,
+          ].join(","));
+        }
+      });
+    });
+
+    // CSVデータを文字列に変換
+    const csvString = csvRows.join("\n");
+
+        // BOM を追加
+    const bom = "\uFEFF"; // UTF-8 BOM
+    const csvWithBom = bom + csvString;
+
+     // 現在の日時を取得してフォーマット
+    const now = new Date();
+    const formattedDate = now
+      .toISOString()
+      .replace(/[-:T]/g, "")
+      .slice(0, 15); // YYYYMMDDHHMMSS 形式に変換
+
+    const CSVfilename = `meitetsu_within_100m_${formattedDate}.csv`; // ファイル名を生成
+
+    // ダウンロード用リンクを作成
+    const blob = new Blob([csvWithBom], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = CSVfilename;
+    a.click();
+    URL.revokeObjectURL(url);
+
+  },//exportCsv
+
+  searchAndCenter(searchTerm) {
+    if (!searchTerm) {
+      console.warn("検索文字列が空です");
+      return;
+    }
+
+    // 検索文字列でフィルタリング
+    const matchingParking = this.parkingData.find((data) => {
+      return (
+        data.parkcd.includes(searchTerm) || 
+        data.parkname.includes(searchTerm)
+      );
+    });
+
+    if (!matchingParking) {
+      alert("一致する駐車場が見つかりませんでした");
+      return;
+    }
+
+    // 地図の中心を更新
+    this.map.setCenter({ lat: matchingParking.lat, lng: matchingParking.lng });
+    this.map.setZoom(15); // 必要に応じてズームレベルを調整
+  }, //searchAndCenter
+
+
+
+  }, //method 
+}; //export Default
 </script>
 
 <style>
