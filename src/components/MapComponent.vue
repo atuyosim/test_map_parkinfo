@@ -11,6 +11,10 @@ export default {
       type: Object,
       required: true,
     },
+    distance: {
+      type: Number,
+      required: true, // 距離を受け取る
+    },
     onMarkerClick: {
       type: Function,
       required: true,
@@ -80,7 +84,10 @@ export default {
     initMap() {
       const mapOptions = {
         center: { lat: 35.0, lng: 136.9 },
-        zoom: 11,
+        zoom: 10,
+        zoomControlOptions: {
+                    position: google.maps.ControlPosition.LEFT_CENTER, // ズームコントロールを左中央に配置
+        },
       };
       this.map = new google.maps.Map(this.$refs.mapContainer, mapOptions);
     },
@@ -129,14 +136,14 @@ export default {
                   const basePosition = new google.maps.LatLng(baseData.lat, baseData.lng);
                   const meitetsuPosition = new google.maps.LatLng(meitetsu.lat, meitetsu.lng);
 
-                  const distance = google.maps.geometry.spherical.computeDistanceBetween(basePosition, meitetsuPosition);
+                  const dis = google.maps.geometry.spherical.computeDistanceBetween(basePosition, meitetsuPosition);
 
-                  if (distance <= 100) {
+                  if (dis <= this.distance) {
                     // 協商データのマーカーを表示
                     const meitetsuMarker = new google.maps.Marker({
                       position: { lat: meitetsu.lat, lng: meitetsu.lng },
                       map: this.map,
-                      title: meitetsu.parkcd + ":" +  meitetsu.parkname,
+                      title: meitetsu.parkname,
                       icon: icons[0], // 名鉄協商のアイコン
                     });
 
@@ -183,9 +190,9 @@ export default {
 
       meitetsuData.forEach((meitetsu) => {
         const meitetsuPosition = new google.maps.LatLng(meitetsu.lat, meitetsu.lng);
-        const distance = google.maps.geometry.spherical.computeDistanceBetween(basePosition, meitetsuPosition);
+        const dis = google.maps.geometry.spherical.computeDistanceBetween(basePosition, meitetsuPosition);
 
-        if (distance <= 100) {
+        if (dis <= this.distance) {
           csvRows.push([
             meitetsu.parkcd,
             meitetsu.parkname,
@@ -211,7 +218,7 @@ export default {
       .replace(/[-:T]/g, "")
       .slice(0, 15); // YYYYMMDDHHMMSS 形式に変換
 
-    const CSVfilename = `meitetsu_within_100m_${formattedDate}.csv`; // ファイル名を生成
+    const CSVfilename = `meitetsu_within_changed_${formattedDate}.csv`; // ファイル名を生成
 
     // ダウンロード用リンクを作成
     const blob = new Blob([csvWithBom], { type: "text/csv" });
@@ -257,6 +264,6 @@ export default {
 <style>
 .map-container {
   width: 100%;
-  height: 100vh;
+  height: 90vh;
 }
 </style>

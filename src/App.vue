@@ -4,7 +4,7 @@
       @filterChanged = "handleFilterChange" 
       @exportCsv = "exportCsv"
       @searchParking="handleSearchParking"
-
+      @distanceChanged="handleDistanceChange"
     />
     <div class="main-content">
       <!-- SidebarComponent -->
@@ -17,6 +17,7 @@
       <MapComponent 
         ref="mapComponent" 
         :filters="filters" 
+        :distance="distance" 
         :onMarkerClick="handleMarkerClick" />
     </div>
   </div>
@@ -40,7 +41,7 @@ export default {
       selectedParking: null,   // 選択された駐車場の情報
 
       filters: { ryokin: false }, // 必須プロパティを初期化
-
+      distance: 100, // 初期値は100m
     };
   },
 
@@ -76,6 +77,10 @@ export default {
     async handleFilterChange(newFilters) {
       console.log('called handleFiterChange');
       this.filters = newFilters; // フィルタを更新
+    },
+
+    async handleDistanceChange(newDistance) {
+      this.distance = newDistance; // 距離を更新
     },
 
     exportCsv() {

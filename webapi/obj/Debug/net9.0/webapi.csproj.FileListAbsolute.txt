@@ -1,0 +1,8 @@
+C:\myWork\dev\test\TestDesign\test_map_parkinfo\webapi\obj\Debug\net9.0\webapi.csproj.AssemblyReference.cache
+C:\myWork\dev\test\TestDesign\test_map_parkinfo\webapi\obj\Debug\net9.0\webapi.GeneratedMSBuildEditorConfig.editorconfig
+C:\myWork\dev\test\TestDesign\test_map_parkinfo\webapi\obj\Debug\net9.0\webapi.AssemblyInfoInputs.cache
+C:\myWork\dev\test\TestDesign\test_map_parkinfo\webapi\obj\Debug\net9.0\webapi.AssemblyInfo.cs
+C:\myWork\dev\test\TestDesign\test_map_parkinfo\webapi\obj\Debug\net9.0\webapi.csproj.CoreCompileInputs.cache
+C:\myWork\dev\test\TestDesign\test_map_parkinfo\webapi\obj\Debug\net9.0\webapi.MvcApplicationPartsAssemblyInfo.cs
+C:\myWork\dev\test\TestDesign\test_map_parkinfo\webapi\obj\Debug\net9.0\webapi.MvcApplicationPartsAssemblyInfo.cache
+C:\myWork\dev\test\TestDesign\test_map_parkinfo\webapi\obj\Debug\net9.0\webapi.sourcelink.json

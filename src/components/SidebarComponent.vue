@@ -1,11 +1,10 @@
 <template>
   <div v-if=" parkingInfo && parkingInfo.ryokinData && parkingInfo.ryokinData.length > 0" class="sidebar">
 
+    <button class="close-button" @click="closeSidebar">閉じる</button>
     <h2>
-      {{ parkingInfo.parkname }}
-      <button class="close-button" @click="closeSidebar">閉じる</button>
+        <a :href="parkingInfo.url" target="_blank">{{ parkingInfo.parkname }}</a>
     </h2>
-    <a :href="parkingInfo.url" target="_blank">HPを開く</a>
 
     <!-- 駐車場の料金情報をテーブル形式で表示 -->
      <div v-for="(ryokin, index) in parkingInfo.ryokinData" :key="index" class="ryokin-section">
@@ -126,9 +125,10 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
-  width: 50%; /* サイドバーを画面幅の半分に設定 */
+  width: 45%; /* サイドバーを画面幅の半分に設定 */
   height: 100vh;
-  background-color: rgb(241, 244, 175);
+  opacity: 95%;
+  background-color: rgb(149, 230, 152);
   border-right: 1px solid #ccc;
   overflow-y: auto;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
@@ -136,10 +136,25 @@ export default {
   padding: 20px;
 }
 
+.close-button{
+    position: absolute;
+    right: 0;
+    top: 2%;
+    transform: translateY(-50%);
+}
+
 .parking-info-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+}
+
+div.ryokin-section h3{
+  margin-top:20px;
+  margin-bottom:0px;
+}
+div.ryokin-section .parking-info-table{
+  margin-top:3px;
 }
 
 .parking-info-table th,
