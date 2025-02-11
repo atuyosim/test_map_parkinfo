@@ -1,20 +1,20 @@
 <template>
   <div v-if=" parkingInfo && parkingInfo.ryokinData && parkingInfo.ryokinData.length > 0" class="sidebar">
 
-    <button class="close-button" @click="closeSidebar">閉じる</button>
+    <button class="close-button btn btn-outline-secondary btn-sm" @click="closeSidebar">閉じる</button>
     <h2>
         <a :href="parkingInfo.url" target="_blank">{{ parkingInfo.parkname }}</a>
     </h2>
 
     <!-- 駐車場の料金情報をテーブル形式で表示 -->
      <div v-for="(ryokin, index) in parkingInfo.ryokinData" :key="index" class="ryokin-section">
-      <h3>取得日: {{ ryokin.getinfodate }}</h3>
+      <h3>取得日: {{ formatDate(ryokin.getinfodate) }} 【{{ parkingInfo.parkcd }}】</h3>
       <table class="parking-info-table">
         <thead>
           <tr>
             <th>適用  </th>
-            <th colspan=2>最大料金説明</th>
-            <th colspan=2>通常料金説明</th>
+            <th colspan=2>最大料金</th>
+            <th colspan=2>通常料金</th>
           </tr>
         </thead>
         <tbody>
@@ -116,6 +116,17 @@ export default {
       console.log('close-sidebar event emitted'); // イベントが発火されたことを確認
       this.$emit("close-sidebar");
     },
+    formatDate(dateString) {
+      if (!dateString || dateString.length !== 8) return "情報なし";
+
+      // yyyy, MM, dd を分割
+      const year = dateString.slice(0, 4);
+      const month = dateString.slice(4, 6);
+      const day = dateString.slice(6, 8);
+
+      return `${year}/${month}/${day}`;
+    }
+
   },
 };
 </script>
@@ -136,12 +147,43 @@ export default {
   padding: 20px;
 }
 
+/* 取得日のフォントサイズを1段階小さくする */
+div.ryokin-section h3 {
+  font-size: 0.9em; /* 通常のサイズより少し小さく */
+}
+
+/* 駐車場名称のフォントサイズを2段階小さくする */
+.sidebar h2 {
+  font-size: 1.2em; /* 2段階小さく */
+}
+
+
+:deep(.parking-info-table thead) {
+  background-color: rgb(93, 94, 92);
+  color: black;
+  font-weight: bold;
+}
+
+
 .close-button{
     position: absolute;
     right: 0;
     top: 2%;
     transform: translateY(-50%);
+
+    background-color:rgb(17, 190, 141);  /* 赤系の閉じるボタン */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out;
 }
+.close-button:hover {
+  background-color:rgb(4, 39, 152); /* ホバー時の色変更 */
+}
+
 
 .parking-info-table {
   width: 100%;

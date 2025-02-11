@@ -9,10 +9,12 @@
   },
   "dependencies": {
     "@fawmi/vue-google-maps": "^0.9.79",
+    "bootstrap": "^5.3.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "leaflet": "^1.9.4",
     "mssql": "^11.0.1",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   }
 }

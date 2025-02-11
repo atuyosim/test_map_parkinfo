@@ -85,6 +85,7 @@ export default {
       const mapOptions = {
         center: { lat: 35.0, lng: 136.9 },
         zoom: 10,
+
         zoomControlOptions: {
                     position: google.maps.ControlPosition.LEFT_CENTER, // ズームコントロールを左中央に配置
         },
@@ -180,56 +181,87 @@ export default {
 
     },//updateMap
     async exportCsv() {
-    const filteredData = this.parkingData.filter((data) => data.ryokin === 1);
-    const meitetsuData = this.parkingData.filter((data) => data.company === 0);
-    const csvRows = [["parkcd,parkname,url,times_parkname,times_url"]]; // ヘッダー行
+      const filteredData = this.parkingData.filter((data) => data.ryokin === 1);
+      const meitetsuData = this.parkingData.filter((data) => data.company === 0);
 
-    // 100m以内の協商データを探索
-    filteredData.forEach((baseData) => {
-      const basePosition = new google.maps.LatLng(baseData.lat, baseData.lng);
+     // const csvRows = [["parkcd,parkname,url,times_parkname,times_url"]]; // ヘッダー行
+        const csvRows = [["distance(m),parkcd,parkname,url,other_park,other_url"]]; // ヘッダー行に "distance(m)" を追加
+        const dataRows = []; // 一時的なデータ配列
 
-      meitetsuData.forEach((meitetsu) => {
-        const meitetsuPosition = new google.maps.LatLng(meitetsu.lat, meitetsu.lng);
-        const dis = google.maps.geometry.spherical.computeDistanceBetween(basePosition, meitetsuPosition);
+      // 距離以内の協商データを探索
+      filteredData.forEach((baseData) => {
+        const basePosition = new google.maps.LatLng(baseData.lat, baseData.lng);
 
-        if (dis <= this.distance) {
-          csvRows.push([
-            meitetsu.parkcd,
-            meitetsu.parkname,
-            meitetsu.url,
-            baseData.parkname,
-            baseData.url,
-          ].join(","));
-        }
+        meitetsuData.forEach((meitetsu) => {
+          const meitetsuPosition = new google.maps.LatLng(meitetsu.lat, meitetsu.lng);
+          const dis = google.maps.geometry.spherical.computeDistanceBetween(basePosition, meitetsuPosition);
+
+          if (dis <= this.distance) {
+
+           // dataRows.push([
+           //   meitetsu.parkcd,
+           //   meitetsu.parkname,
+           //   Math.round(dis),
+           //   meitetsu.url,
+           //   baseData.parkname,
+           //   baseData.url,
+           // ].join(","));
+
+            dataRows.push([
+              String(Math.round(dis)), // 距離（m）
+              String(meitetsu.parkcd), // 駐車場CD
+              String(meitetsu.parkname), // 駐車場名
+              String(meitetsu.url), // 名鉄のURL
+              String(baseData.parkname), // 料金変更があった駐車場名
+              String(baseData.url), // 料金変更があった駐車場URL
+            ]);
+
+          }
+        });
       });
-    });
 
-    // CSVデータを文字列に変換
-    const csvString = csvRows.join("\n");
+      //console.log(" dataRows (before sort):", dataRows);
 
-        // BOM を追加
-    const bom = "\uFEFF"; // UTF-8 BOM
-    const csvWithBom = bom + csvString;
+      // 距離の昇順でソート（近い順）
+      dataRows.sort((a, b) => a[0] - b[0]);
 
-     // 現在の日時を取得してフォーマット
-    const now = new Date();
-    const formattedDate = now
-      .toISOString()
-      .replace(/[-:T]/g, "")
-      .slice(0, 15); // YYYYMMDDHHMMSS 形式に変換
+      //console.log(" dataRows (after sort):", dataRows);
 
-    const CSVfilename = `meitetsu_within_changed_${formattedDate}.csv`; // ファイル名を生成
+       // **CSV用のデータを `join(",")` して `csvRows` に追加**
+      dataRows.forEach(row => csvRows.push(row));
 
-    // ダウンロード用リンクを作成
-    const blob = new Blob([csvWithBom], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = CSVfilename;
-    a.click();
-    URL.revokeObjectURL(url);
+      // `csvRows` にソート済みデータを追加
+      //dataRows.forEach(row => csvRows.push(row.join(",")));
+      // **CSV用のデータを `join(",")` して `csvRows` に追加**
+      //dataRows.forEach(row => csvRows.push(row.map(String))); // `String()` で数値を文字列に変換
 
-  },//exportCsv
+      // CSVデータを文字列に変換
+      const csvString = csvRows.join("\n");
+      //const csvString = csvRows.map(row => row.join(",")).join("\n");
+
+      // BOM を追加
+      const bom = "\uFEFF"; // UTF-8 BOM
+      const csvWithBom = bom + csvString;
+
+      // 現在の日時を取得してフォーマット
+      const now = new Date();
+      const formattedDate = now
+        .toISOString()
+        .replace(/[-:T]/g, "")
+        .slice(0, 15); // YYYYMMDDHHMMSS 形式に変換
+
+      const CSVfilename = `meitetsu_within_changed_${formattedDate}.csv`; // ファイル名を生成
+
+      // ダウンロード用リンクを作成
+      const blob = new Blob([csvWithBom], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = CSVfilename;
+      a.click();
+      URL.revokeObjectURL(url);
+
+    },//exportCsv
 
   searchAndCenter(searchTerm) {
     if (!searchTerm) {
